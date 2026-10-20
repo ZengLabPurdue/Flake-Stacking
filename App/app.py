@@ -18,13 +18,10 @@ from mapping.mapper import Mapper
 from scanning.scan_manager import ScanManager
 from scanning.scan_profile import ScanProfile
 from hardware.stage_api import stage
-from hardware.turret_controller import TurretController
 from ui.panels.info_panel import InfoPanel
 from ui.panels.stage_control_panel import StageControlPanel
-from ui.panels.objective_control_panel import ObjectiveControlPanel
 from ui.panels.focus_panel import FocusPanel
 from ui.panels.scan_status_panel import ScanStatusPanel
-from ui.panels.scan_setup_panel import ScanSetupPanel
 from ui.panels.view_scans_panel import ViewScansPanel
 from ui.panels.scan_profile_panel import ScanProfilePanel
 from ui.panels.capture_panel import CapturePanel
@@ -125,12 +122,7 @@ class App:
             frame_processor=self.frame_processor,
         )
 
-        self.turret_controller = TurretController( 
-            app=self,
-            stage=self.stage,
-            turret_port=TURRET_COM_PORT,
-            start_auto_focus_thread=self.focus_controller.start_auto_focus_thread,
-        )
+        
 
         self.info_panel = InfoPanel(parent=self.main_frame)
 
@@ -144,7 +136,6 @@ class App:
             root=self.root,
             app=self,
             stage=self.stage,
-            turret_controller=self.turret_controller,
             frame_processor=self.frame_processor,
             update_scan_status=self.scan_status_panel.update_status,
         )
@@ -156,7 +147,6 @@ class App:
             root=self.root,
             app=self,
             stage=self.stage,
-            turret_controller=self.turret_controller,
             camera=self.frame_processor.get_camera(),
             frame_processor=self.frame_processor,
             mapper=self.mapper,
@@ -173,12 +163,6 @@ class App:
             stage=self.stage,
         )
 
-        self.objective_control_panel = ObjectiveControlPanel(
-            parent=self.main_frame,
-            app=self,
-            stage=self.stage,
-            turret_controller=self.turret_controller,
-        )
 
         self.capture_panel = CapturePanel(
             parent=self.main_frame,
@@ -221,13 +205,6 @@ class App:
             scan_profile=self.scan_profile,
         )
 
-        self.scan_setup_panel = ScanSetupPanel(
-            parent=self.main_frame,
-            root=self.root,
-            app=self,
-            scan_manager=self.scan_manager,
-            ui_dispatch=self.call_on_ui_thread,
-        )
 
         self.focus_controller.sharpness_callback = self.focus_panel.update_sharpness
 
@@ -262,22 +239,12 @@ class App:
         })
 
         self.panels.append({
-            "name": "Objective Control Panel",
-            "frame": self.objective_control_panel.frame,
-            "var": BooleanVar(value=False)
-        })
-
-        self.panels.append({
             "name": "Focus Panel",
             "frame": self.focus_panel.frame,
             "var": BooleanVar(value=False)
         })
 
-        self.panels.append({
-            "name": "Scan Setup Panel",
-            "frame": self.scan_setup_panel.frame,
-            "var": BooleanVar(value=False)
-        })
+
 
         self.update_panels()
 
@@ -391,8 +358,6 @@ class App:
         self._auto_map_menu_index = map_menu.index("end")
         self.map_menu = map_menu
         menu_bar.add_cascade(label="Map", menu=map_menu)
-
-        menu_bar.add_command(label="Scan", command=self.scan_setup_panel.show)
 
         self.root.config(menu=menu_bar)
 
@@ -763,20 +728,7 @@ class App:
         focus_shutdown_failed = (
             focus_thread is not None and focus_thread.is_alive()
         )
-        if not self._shutdown_focus_prepared and not focus_shutdown_failed:
-            self._shutdown_returning_to_objective = True
-            try:
-                print("Shutdown: returning to objective 1 and focusing...")
-                self.turret_controller.return_to_first_objective_and_focus()
-                print("Shutdown: objective 1 is focused.")
-            except Exception as error:
-                print(
-                    "Shutdown warning: could not return to objective 1 "
-                    f"and focus: {error}"
-                )
-            finally:
-                self._shutdown_returning_to_objective = False
-                self._shutdown_focus_prepared = True
+
 
         self._closing = True
         if self._ui_poll_job is not None:
@@ -789,7 +741,6 @@ class App:
             if hasattr(self, "view_scans_panel"):
                 self.view_scans_panel.shutdown()
             self.frame_processor.close()
-            self.turret_controller.close()
             self.stage.disconnect()
         except Exception as error:
             print(f"Shutdown warning: {error}")

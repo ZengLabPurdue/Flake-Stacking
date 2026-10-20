@@ -14,14 +14,12 @@ class Mapper:
         root,
         app,
         stage,
-        turret_controller,
         frame_processor,
         update_scan_status,
     ):
         self.root = root
         self.app = app
         self.stage = stage
-        self.turret_controller = turret_controller
         self.frame_processor = frame_processor
         self.update_scan_status = update_scan_status
         self.scan_running = False
@@ -34,11 +32,6 @@ class Mapper:
             return False
 
         self.app.set_live_mapping(False)
-
-        self.turret_controller.change_objective(
-            1,
-            cancel_check=check_cancelled,
-        )
 
         self.app.set_true_map(np.zeros((MAP_SIZE, MAP_SIZE, 3), dtype=np.uint8))
         self.app.set_filter_map(np.zeros((MAP_SIZE, MAP_SIZE), dtype=np.uint8))

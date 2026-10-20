@@ -51,7 +51,6 @@ class ScanManager:
         root,
         app,
         stage,
-        turret_controller,
         camera,
         frame_processor,
         mapper,
@@ -62,7 +61,6 @@ class ScanManager:
         self.root = root
         self.app = app
         self.stage = stage
-        self.turret_controller = turret_controller
         self.camera = camera
         self.frame_processor = frame_processor
         self.mapper = mapper
@@ -533,12 +531,6 @@ class ScanManager:
 
     def _change_objective(self, position, autofocus=True):
         self._check_cancelled()
-        self._wait_for_stage()
-        self.turret_controller.change_objective(
-            position,
-            cancel_check=self._check_cancelled,
-            autofocus=autofocus,
-        )
         self._wait_for_stage()
 
     def _process_ui_events(self):

@@ -183,91 +183,91 @@ class StageControlPanel:
         self.btn_right.grid(row=1, column=2, sticky="nsew")
         self.btn_backward.grid(row=1, column=1, sticky="nsew")
 
-        # Z section
-        tk.Label(
-            panel,
-            text="Z Step Size (µm):",
-            bg="white",
-            fg="black",
-            width=15,
-            anchor="e"
-        ).place(x=label_x, y=345)
+        # # Z section
+        # tk.Label(
+        #     panel,
+        #     text="Z Step Size (µm):",
+        #     bg="white",
+        #     fg="black",
+        #     width=15,
+        #     anchor="e"
+        # ).place(x=label_x, y=345)
 
-        self.z_step_var = tk.StringVar(value=str(self.stage.z_step_size))
-        self.z_step_entry = ttk.Entry(panel, textvariable=self.z_step_var, width=8)
-        self.z_step_entry.place(x=entry_x, y=345)
+        # self.z_step_var = tk.StringVar(value=str(self.stage.z_step_size))
+        # self.z_step_entry = ttk.Entry(panel, textvariable=self.z_step_var, width=8)
+        # self.z_step_entry.place(x=entry_x, y=345)
 
-        tk.Label(
-            panel,
-            text="Z Speed (µm/s):",
-            bg="white",
-            fg="black",
-            width=15,
-            anchor="e"
-        ).place(x=label_x, y=375)
+        # tk.Label(
+        #     panel,
+        #     text="Z Speed (µm/s):",
+        #     bg="white",
+        #     fg="black",
+        #     width=15,
+        #     anchor="e"
+        # ).place(x=label_x, y=375)
 
-        self.z_speed_var = tk.StringVar(value=str(self.stage.z_velocity))
-        self.z_speed_var.trace_add("write", self.on_speed_change_z)
+        # self.z_speed_var = tk.StringVar(value=str(self.stage.z_velocity))
+        # self.z_speed_var.trace_add("write", self.on_speed_change_z)
 
-        self.z_speed_entry = ttk.Entry(panel, textvariable=self.z_speed_var, width=8)
-        self.z_speed_entry.place(x=entry_x, y=375)
+        # self.z_speed_entry = ttk.Entry(panel, textvariable=self.z_speed_var, width=8)
+        # self.z_speed_entry.place(x=entry_x, y=375)
 
-        tk.Label(
-            panel,
-            text="Z (µm):",
-            bg="white",
-            fg="black",
-            width=15,
-            anchor="e"
-        ).place(x=label_x, y=405)
+        # tk.Label(
+        #     panel,
+        #     text="Z (µm):",
+        #     bg="white",
+        #     fg="black",
+        #     width=15,
+        #     anchor="e"
+        # ).place(x=label_x, y=405)
 
-        self.z_coord_var = tk.StringVar()
-        self.z_coord_entry = ttk.Entry(panel, textvariable=self.z_coord_var, width=8)
-        self.z_coord_entry.place(x=entry_x, y=405)
+        # self.z_coord_var = tk.StringVar()
+        # self.z_coord_entry = ttk.Entry(panel, textvariable=self.z_coord_var, width=8)
+        # self.z_coord_entry.place(x=entry_x, y=405)
 
-        self.z_reset_button = ttk.Button(
-            panel,
-            text="Set Z = 0",
-            style="Normal.TButton",
-            command=self.set_z_zero
-        )
-        self.z_reset_button.place(relx=0.5, y=440, anchor="n")
-        self.app.register_button(self.z_reset_button)
+        # self.z_reset_button = ttk.Button(
+        #     panel,
+        #     text="Set Z = 0",
+        #     style="Normal.TButton",
+        #     command=self.set_z_zero
+        # )
+        # self.z_reset_button.place(relx=0.5, y=440, anchor="n")
+        # self.app.register_button(self.z_reset_button)
 
-        self.z_move_to_button = ttk.Button(
-            panel,
-            text="Move to Z",
-            style="Normal.TButton",
-            command=self.go_to_z_position
-        )
-        self.z_move_to_button.place(relx=0.5, y=475, anchor="n")
-        self.app.register_button(self.z_move_to_button)
+        # self.z_move_to_button = ttk.Button(
+        #     panel,
+        #     text="Move to Z",
+        #     style="Normal.TButton",
+        #     command=self.go_to_z_position
+        # )
+        # self.z_move_to_button.place(relx=0.5, y=475, anchor="n")
+        # self.app.register_button(self.z_move_to_button)
 
-        z_button_panel = tk.Frame(panel, bg="white", width=80, height=45)
-        z_button_panel.place(relx=0.5, y=510, anchor="n")
-        z_button_panel.pack_propagate(False)
+        # z_button_panel = tk.Frame(panel, bg="white", width=80, height=45)
+        # z_button_panel.place(relx=0.5, y=510, anchor="n")
+        # z_button_panel.pack_propagate(False)
 
-        z_controls = tk.Frame(z_button_panel, bg="white")
-        z_controls.pack(expand=True, fill="both")
+        # z_controls = tk.Frame(z_button_panel, bg="white")
+        # z_controls.pack(expand=True, fill="both")
 
-        self.btn_up = ttk.Button(z_controls, text="▴", style="Arrow.TButton")
-        self.btn_down = ttk.Button(z_controls, text="▾", style="Arrow.TButton")
+        # self.btn_up = ttk.Button(z_controls, text="▴", style="Arrow.TButton")
+        # self.btn_down = ttk.Button(z_controls, text="▾", style="Arrow.TButton")
 
-        self.btn_up.bind("<ButtonPress-1>", self.on_press_up)
-        self.btn_up.bind("<ButtonRelease-1>", self.on_release_up)
+        # self.btn_up.bind("<ButtonPress-1>", self.on_press_up)
+        # self.btn_up.bind("<ButtonRelease-1>", self.on_release_up)
 
-        self.btn_down.bind("<ButtonPress-1>", self.on_press_down)
-        self.btn_down.bind("<ButtonRelease-1>", self.on_release_down)
+        # self.btn_down.bind("<ButtonPress-1>", self.on_press_down)
+        # self.btn_down.bind("<ButtonRelease-1>", self.on_release_down)
 
-        self.app.register_button(self.btn_up)
-        self.app.register_button(self.btn_down)
+        # self.app.register_button(self.btn_up)
+        # self.app.register_button(self.btn_down)
 
-        z_controls.rowconfigure(0, weight=1)
-        z_controls.columnconfigure(0, weight=1)
-        z_controls.columnconfigure(1, weight=1)
+        # z_controls.rowconfigure(0, weight=1)
+        # z_controls.columnconfigure(0, weight=1)
+        # z_controls.columnconfigure(1, weight=1)
 
-        self.btn_up.grid(row=0, column=0, sticky="nsew")
-        self.btn_down.grid(row=0, column=1, sticky="nsew")
+        # self.btn_up.grid(row=0, column=0, sticky="nsew")
+        # self.btn_down.grid(row=0, column=1, sticky="nsew")
 
         return panel
     
@@ -278,7 +278,7 @@ class StageControlPanel:
 
         self.x_coord_var.set(str(x))
         self.y_coord_var.set(str(y))
-        self.z_coord_var.set(str(z))
+        # self.z_coord_var.set(str(z))
 
     # ---------------- Absolute movement ----------------
 
@@ -371,11 +371,6 @@ class StageControlPanel:
     def update_step_sizes(self):
         try:
             self.stage.set_xy_step_size(int(self.xy_step_var.get()))
-        except ValueError:
-            pass
-
-        try:
-            self.stage.set_z_step_size(int(self.z_step_var.get()))
         except ValueError:
             pass
 
