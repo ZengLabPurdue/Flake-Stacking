@@ -18,6 +18,7 @@ from mapping.mapper import Mapper
 from scanning.scan_manager import ScanManager
 from scanning.scan_profile import ScanProfile
 from hardware.stage_api import stage
+from hardware.thor_controller import ThorController
 from ui.panels.info_panel import InfoPanel
 from ui.panels.stage_control_panel import StageControlPanel
 from ui.panels.focus_panel import FocusPanel
@@ -26,6 +27,7 @@ from ui.panels.view_scans_panel import ViewScansPanel
 from ui.panels.scan_profile_panel import ScanProfilePanel
 from ui.panels.capture_panel import CapturePanel
 from ui.panels.camera_settings_panel import CameraSettingsPanel
+from ui.panels.thor_controller_panel import ThorControlPanel
 from ui.display_acceleration import DisplayResizer
 from imaging.frame_processing import FrameProcessor
 from imaging.focus import FocusController
@@ -36,9 +38,10 @@ from imaging.flatfield_storage import (
     vignette_substrate_label,
 )
 
+
 DLL_PATH = os.getcwd() + r"\hardware\PriorSDK1.9.2\x64\PriorScientificSDK.dll"
 PRIOR_COM_PORT = sys.argv[1]
-TURRET_COM_PORT = sys.argv[2]
+THOR_COM_PORT = sys.argv[2]
 
 class App:
     def __init__(self, root):
@@ -64,7 +67,7 @@ class App:
         self._last_display_metrics = None
         self._schedule_ui_queue_poll()
 
-        self.root.title("Scanning App")
+        self.root.title("Stacking App")
         self.main_frame = Frame(root, bg="#f0f0f0")
         self.main_frame.pack(fill=BOTH, expand=True)
 
@@ -121,8 +124,13 @@ class App:
             stage=self.stage,
             frame_processor=self.frame_processor,
         )
-
-        
+        # fix later pls
+        self.thor_controller = ThorController(THOR_COM_PORT)
+        self.thor_panel = ThorControlPanel(
+            app=self,
+            root=self.root,
+            thor=self.thor_controller
+        )
 
         self.info_panel = InfoPanel(parent=self.main_frame)
 

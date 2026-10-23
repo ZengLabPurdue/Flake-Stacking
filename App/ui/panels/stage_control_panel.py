@@ -26,14 +26,14 @@ class StageControlPanel:
             self.parent,
             bg="#f0f0f0",
             width=204,
-            height=570
+            height=370
         )
 
         background = tk.Frame(
             panel,
             bg="white",
             width=200,
-            height=568
+            height=368
         )
         background.place(x=2, y=0)
 

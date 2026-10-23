@@ -72,9 +72,7 @@ class stage:
                 create_string_buffer(msg.encode()),
                 self.rx
             )
-
             response = self.rx.value.decode().strip()
-
         return ret, response
 
     def initialize_stage(self):

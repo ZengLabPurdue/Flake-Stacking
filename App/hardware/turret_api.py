@@ -76,7 +76,7 @@ class turret:
             response = self.Usart.readline()
 
             if response:
-
+                
                 response = response.decode().strip()
                 #print(f"Received: {response}")
 
