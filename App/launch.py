@@ -24,16 +24,9 @@ def on_close():
     python_exe = Path(sys.executable)
     script = scanner_path
 
-<<<<<<< Updated upstream
     cmd = [str(python_exe), str(script), str(prior_args_final), str(thor_args_final)]
     subprocess.run(cmd, check=True)
-=======
-    cmd = [str(python_exe), str(script), str(prior_args_final), str(olympius_args_final)]
-    try:
-        subprocess.run(cmd, check=True)
-    except Exception as e:
-        print(e)
->>>>>>> Stashed changes
+
 
 try:
     with open("port.config", "r") as f:
@@ -57,7 +50,7 @@ prior_entry = ttk.Entry(frame, textvariable=prior_args, width=10)
 prior_entry.grid(row=0, column=1, pady=(0,10), sticky="w")
 prior_entry.focus()
 
-thor_label = ttk.Label(frame, text="Thor COM Port:")
+thor_label = ttk.Label(frame, text="Thor Serial Number:")
 thor_label.grid(row=1, column=0, padx=(0,10), pady=(0,10), sticky="e")
 
 thor_args = StringVar(value=thor_args_value)

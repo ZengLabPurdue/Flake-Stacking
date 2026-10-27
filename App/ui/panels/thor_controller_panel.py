@@ -21,19 +21,21 @@ class ThorControlPanel:
         self.frame = self._build_panel()
         self.update_position_display()
 
+        
+
     def _build_panel(self):
         panel = tk.Frame(
             self.parent,
             bg="#f0f0f0",
             width=204,
-            height=570
+            height=620
         )
 
         background = tk.Frame(
             panel,
             bg="white",
             width=200,
-            height=568
+            height=618
         )
         background.place(x=2, y=0)
 
@@ -77,7 +79,7 @@ class ThorControlPanel:
             anchor="e"
         ).place(x=label_x, y=75)
 
-        self.xy_speed_var = tk.StringVar(value=str(self.stage.velocity))
+        self.xy_speed_var = tk.StringVar(value=str(self.thor.velocity))
         self.xy_speed_var.trace_add("write", self.on_speed_change_xy)
 
         self.xy_speed_entry = ttk.Entry(
@@ -193,7 +195,7 @@ class ThorControlPanel:
             anchor="e"
         ).place(x=label_x, y=345)
 
-        self.z_step_var = tk.StringVar(value=str(self.stage.z_step_size))
+        self.z_step_var = tk.StringVar(value=str(self.thor.z_step_size))
         self.z_step_entry = ttk.Entry(panel, textvariable=self.z_step_var, width=8)
         self.z_step_entry.place(x=entry_x, y=345)
 
@@ -206,7 +208,7 @@ class ThorControlPanel:
             anchor="e"
         ).place(x=label_x, y=375)
 
-        self.z_speed_var = tk.StringVar(value=str(self.stage.z_velocity))
+        self.z_speed_var = tk.StringVar(value=str(self.thor.z_velocity))
         self.z_speed_var.trace_add("write", self.on_speed_change_z)
 
         self.z_speed_entry = ttk.Entry(panel, textvariable=self.z_speed_var, width=8)
@@ -271,16 +273,27 @@ class ThorControlPanel:
         self.btn_up.grid(row=0, column=0, sticky="nsew")
         self.btn_down.grid(row=0, column=1, sticky="nsew")
 
+
+        self.kill_button = ttk.Button(
+            panel,
+            text="Kill All Motion",
+            style="Normal.TButton",
+            command=self.thor.stop_all
+        )
+        self.kill_button.place(relx=0.5, y=560, anchor="n")
+        self.app.register_button(self.kill_button)
+
         return panel
     
     # ---------------- Position display ----------------
 
     def update_position_display(self):
-        x, y, z = self.stage.get_position()
+        x, y, z, angle = self.thor.get_position()
 
         self.x_coord_var.set(str(x))
         self.y_coord_var.set(str(y))
         self.z_coord_var.set(str(z))
+        self.angle_var.set(str(angle))
 
     # ---------------- Absolute movement ----------------
 
@@ -310,7 +323,7 @@ class ThorControlPanel:
 
             print(x)
             print(y)
-            # self.thor.go_to_xypos(x,y)
+            self.thor.go_to_xypos(x,y)
             self.update_position_display()
 
         finally:
@@ -346,7 +359,7 @@ class ThorControlPanel:
             self.root.after_cancel(self.hold_job)
             self.hold_job = None
         if self.is_hold:
-            self.stage.stop_all()
+            self.thor.stop_all()
         self.is_hold = False
 
     def on_press_motion(self, start_func):
@@ -374,49 +387,59 @@ class ThorControlPanel:
 
     def update_step_sizes(self):
         try:
-            self.stage.set_xy_step_size(int(self.xy_step_var.get()))
+            self.thor.set_xy_step_size(int(self.xy_step_var.get()))
         except ValueError:
             pass
 
     # ---------------- XY hold callbacks ----------------
 
     def on_press_forward(self, event):
-        self.on_press_motion(self.stage.start_forward)
+        self.on_press_motion(self.thor.start_forward_y_motor)
 
     def on_release_forward(self, event):
-        self.on_release_motion(self.stage.stop_y, self.stage.step_forward)
+        self.on_release_motion(self.thor.stop_y_motor, self.thor.step_forward)
 
     def on_press_backward(self, event):
-        self.on_press_motion(self.stage.start_backward)
+        self.on_press_motion(self.thor.start_backward_y_motor)
 
     def on_release_backward(self, event):
-        self.on_release_motion(self.stage.stop_y, self.stage.step_backward)
+        self.on_release_motion(self.thor.stop_y_motor, self.thor.step_backward)
 
     def on_press_left(self, event):
-        self.on_press_motion(self.stage.start_left)
+        self.on_press_motion(self.thor.start_left)
 
     def on_release_left(self, event):
-        self.on_release_motion(self.stage.stop_x, self.stage.step_left)
+        self.on_release_motion(self.thor.stop_x_motor, self.thor.step_left)
 
     def on_press_right(self, event):
-        self.on_press_motion(self.stage.start_right)
+        self.on_press_motion(self.thor.start_right)
 
     def on_release_right(self, event):
-        self.on_release_motion(self.stage.stop_x, self.stage.step_right)
+        self.on_release_motion(self.thor.stop_x_motor, self.thor.step_right)
+
+    
 
     # ---------------- Z hold callbacks ----------------
 
     def on_press_up(self, event):
-        self.on_press_motion(self.stage.start_up)
+        self.on_press_motion(self.thor.start_forward_z_motor)
 
     def on_release_up(self, event):
-        self.on_release_motion(self.stage.stop_z, self.stage.step_up)
+        self.on_release_motion(self.thor.stop_z_motor, self.thor.step_up)
 
     def on_press_down(self, event):
-        self.on_press_motion(self.stage.start_down)
+        self.on_press_motion(self.thor.start_backward_z_motor)
 
     def on_release_down(self, event):
-        self.on_release_motion(self.stage.stop_z, self.stage.step_down)
+        self.on_release_motion(self.thor.stop_z_motor, self.thor.step_down)
+
+    def step_up(self):
+        self.get_position()
+        return self.go_to_Zpos(self.z - self.z_step_size)
+
+    def step_down(self):
+        self.get_position()
+        return self.go_to_Zpos(self.z + self.z_step_size)
 
     # ---------------- Speed callbacks ----------------
 

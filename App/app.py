@@ -14,19 +14,12 @@ from PIL import Image, ImageTk
 
 from config import CROP_RATIO, MAP_SIZE, RESOLUTION_DISPLAY
 
-from mapping.mapper import Mapper
 from scanning.scan_profile import ScanProfile
 from hardware.stage_api import stage
 from hardware.thor_controller import ThorController
 from ui.panels.info_panel import InfoPanel
 from ui.panels.stage_control_panel import StageControlPanel
 from ui.panels.focus_panel import FocusPanel
-<<<<<<< Updated upstream
-from ui.panels.scan_status_panel import ScanStatusPanel
-from ui.panels.view_scans_panel import ViewScansPanel
-from ui.panels.scan_profile_panel import ScanProfilePanel
-=======
->>>>>>> Stashed changes
 from ui.panels.capture_panel import CapturePanel
 from ui.panels.camera_settings_panel import CameraSettingsPanel
 from ui.panels.thor_controller_panel import ThorControlPanel
@@ -43,7 +36,7 @@ from imaging.flatfield_storage import (
 
 DLL_PATH = os.getcwd() + r"\hardware\PriorSDK1.9.2\x64\PriorScientificSDK.dll"
 PRIOR_COM_PORT = sys.argv[1]
-THOR_COM_PORT = sys.argv[2]
+THOR_SERIAL = sys.argv[2]
 
 class App:
     def __init__(self, root):
@@ -126,44 +119,19 @@ class App:
             stage=self.stage,
             frame_processor=self.frame_processor,
         )
-        # fix later pls
-        self.thor_controller = ThorController(THOR_COM_PORT)
+        self.thor_controller = ThorController(THOR_SERIAL)
         self.thor_panel = ThorControlPanel(
             app=self,
+            parent=self.main_frame,
             root=self.root,
             thor=self.thor_controller
         )
 
         self.info_panel = InfoPanel(parent=self.main_frame)
 
-        self.mapper = Mapper(
-            root=self.root,
-            app=self,
-            stage=self.stage,
-            frame_processor=self.frame_processor,
-            update_scan_status=self.scan_status_panel.update_status,
-        )
-        self.frame_processor.place_frame_on_map = self.mapper.place_frame_on_map
 
         self.frame_processor.run_camera()
 
-<<<<<<< Updated upstream
-        self.scan_manager = ScanManager(
-            root=self.root,
-            app=self,
-            stage=self.stage,
-            camera=self.frame_processor.get_camera(),
-            frame_processor=self.frame_processor,
-            mapper=self.mapper,
-            update_scan_status=self.scan_status_panel.update_status,
-            set_scan_running=self.set_scan_running,
-            ui_dispatch=self.call_on_ui_thread,
-        )
-        self.scan_status_panel.set_stop_callback(self.scan_manager.stop_scan)
-
-=======
-        
->>>>>>> Stashed changes
         self.stage_control_panel = StageControlPanel(
             parent=self.main_frame,
             root=self.root,
@@ -199,20 +167,6 @@ class App:
             app=self,
             focus_controller=self.focus_controller,
         )
-        
-        self.view_scans_panel = ViewScansPanel(
-            parent=self.main_frame,
-            root=self.root,
-            app=self,
-        )
-
-        self.scan_profile_panel = ScanProfilePanel(
-            parent=self.main_frame,
-            root=self.root,
-            app=self,
-            scan_profile=self.scan_profile,
-        )
-
 
         self.focus_controller.sharpness_callback = self.focus_panel.update_sharpness
 
@@ -222,11 +176,7 @@ class App:
             "var": BooleanVar(value=False)
         })
 
-        self.panels.append({
-            "name": "Scan Info Panel",
-            "frame": self.scan_status_panel.frame,
-            "var": BooleanVar(value=False)
-        })
+        
 
         self.panels.append({
             "name": "Stage Control Panel",
@@ -249,6 +199,12 @@ class App:
         self.panels.append({
             "name": "Focus Panel",
             "frame": self.focus_panel.frame,
+            "var": BooleanVar(value=False)
+        })
+
+        self.panels.append({
+            "name": "Thor Controller Panel",
+            "frame": self.thor_panel.frame,
             "var": BooleanVar(value=False)
         })
 
@@ -310,18 +266,7 @@ class App:
             command=self.show_normal_map_view,
         )
         view_menu.add_separator()
-
-        profile_menu = Menu(view_menu, tearoff=0)
-        profile_menu.add_command(
-            label="Create Profile",
-            command=self.scan_profile_panel.start_create,
-        )
-        profile_menu.add_command(
-            label="Load Profile",
-            command=self.scan_profile_panel.choose_and_load_profile,
-        )
-        view_menu.add_cascade(label="Scan Profiles", menu=profile_menu)
-        self.view_scans_panel.add_to_menu(view_menu)
+        
         view_menu.add_separator()
 
         camera_menu = Menu(view_menu, tearoff=0)
@@ -351,31 +296,7 @@ class App:
 
         menu_bar.add_cascade(label="Panels", menu=panel_menu)
 
-        map_menu = Menu(menu_bar, tearoff=0)
-        map_menu.add_radiobutton(
-            label="Live Map 2x",
-            variable=self.live_mapping_var,
-            value=True,
-            command=self._start_live_map_2x,
-        )
-        self._live_map_menu_index = map_menu.index("end")
-        map_menu.add_command(
-            label="Auto Map 2x",
-            command=self._start_auto_map_2x,
-        )
-        self._auto_map_menu_index = map_menu.index("end")
-        self.map_menu = map_menu
-        menu_bar.add_cascade(label="Map", menu=map_menu)
-
         self.root.config(menu=menu_bar)
-
-    def _start_live_map_2x(self):
-        if not self.hardware_controls_available():
-            self.live_mapping_var.set(False)
-            return
-        self.mapper.set_live_map_2x()
-
-
 
     def display_chip_dropdown(self, display=True):
 

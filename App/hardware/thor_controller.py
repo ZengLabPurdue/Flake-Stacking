@@ -3,8 +3,8 @@ import time
 import clr
 
 homedir = os.getcwd()
-clr.AddReference(homedir + f"\DLLs\Kinesis\Thorlabs.MotionControl.GenericMotorCLI.dll")
-clr.AddReference(homedir + f"\DLLs\Kinesis\Thorlabs.MotionControl.KCube.InertialMotorCLI.dll")
+clr.AddReference(homedir + r"\hardware\DLLs\Kinesis\Thorlabs.MotionControl.GenericMotorCLI.dll")
+clr.AddReference(homedir + r"\hardware\DLLs\Kinesis\Thorlabs.MotionControl.KCube.InertialMotorCLI.dll")
 from Thorlabs.MotionControl.DeviceManagerCLI import *
 from Thorlabs.MotionControl.GenericMotorCLI import *
 from Thorlabs.MotionControl.KCube.InertialMotorCLI import *
@@ -17,6 +17,16 @@ class ThorController:
         self.y = 0
         self.z = 0
         self.angle = 0
+        self.xy_step_var = 1000
+
+        self.velocity = 2600
+        self.acceleration = 134442
+
+        self.z_velocity = 500
+        self.z_acceleration = 10000
+
+        self.xy_step_size = 1000
+        self.z_step_size = 500
 
         try:
             DeviceManagerCLI.BuildDeviceList()
@@ -248,6 +258,36 @@ class ThorController:
         self.device.Stop(self.angle_motor)
     def get_angle_pos(self):
         return self.device.GetPosition(self.angle_motor)
+
+    def get_position(self):
+        self.x = self.get_x_pos()
+        self.y = self.get_y_pos()
+        self.z = self.get_z_pos()
+        self.angle = self.get_angle_pos() 
+        return self.x, self.y, self.z, self.angle
+
+    def stop_all(self):
+        self.stop_x_motor()
+        self.stop_y_motor()
+        self.stop_z_motor()
+        self.stop_angle_motor()
+
+    def step_forward(self):
+        self.get_position()
+        return self.go_to_xypos(self.x, self.y - self.xy_step_size)
+
+    def step_backward(self):
+        self.get_position()
+        return self.go_to_xypos(self.x, self.y + self.xy_step_size)
+
+    def step_left(self):
+        self.get_position()
+        return self.go_to_xypos(self.x + self.xy_step_size, self.y)
+
+    def step_right(self):
+        self.get_position()
+        return self.go_to_xypos(self.x - self.xy_step_size, self.y)
+
 
     def disconnect(self):
         try:
