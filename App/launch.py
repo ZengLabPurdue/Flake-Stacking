@@ -24,8 +24,16 @@ def on_close():
     python_exe = Path(sys.executable)
     script = scanner_path
 
+<<<<<<< Updated upstream
     cmd = [str(python_exe), str(script), str(prior_args_final), str(thor_args_final)]
     subprocess.run(cmd, check=True)
+=======
+    cmd = [str(python_exe), str(script), str(prior_args_final), str(olympius_args_final)]
+    try:
+        subprocess.run(cmd, check=True)
+    except Exception as e:
+        print(e)
+>>>>>>> Stashed changes
 
 try:
     with open("port.config", "r") as f:

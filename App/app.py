@@ -15,16 +15,18 @@ from PIL import Image, ImageTk
 from config import CROP_RATIO, MAP_SIZE, RESOLUTION_DISPLAY
 
 from mapping.mapper import Mapper
-from scanning.scan_manager import ScanManager
 from scanning.scan_profile import ScanProfile
 from hardware.stage_api import stage
 from hardware.thor_controller import ThorController
 from ui.panels.info_panel import InfoPanel
 from ui.panels.stage_control_panel import StageControlPanel
 from ui.panels.focus_panel import FocusPanel
+<<<<<<< Updated upstream
 from ui.panels.scan_status_panel import ScanStatusPanel
 from ui.panels.view_scans_panel import ViewScansPanel
 from ui.panels.scan_profile_panel import ScanProfilePanel
+=======
+>>>>>>> Stashed changes
 from ui.panels.capture_panel import CapturePanel
 from ui.panels.camera_settings_panel import CameraSettingsPanel
 from ui.panels.thor_controller_panel import ThorControlPanel
@@ -134,12 +136,6 @@ class App:
 
         self.info_panel = InfoPanel(parent=self.main_frame)
 
-        self.scan_status_panel = ScanStatusPanel(
-            parent=self.main_frame,
-            root=self.root,
-            ui_dispatch=self.call_on_ui_thread,
-        )
-
         self.mapper = Mapper(
             root=self.root,
             app=self,
@@ -151,6 +147,7 @@ class App:
 
         self.frame_processor.run_camera()
 
+<<<<<<< Updated upstream
         self.scan_manager = ScanManager(
             root=self.root,
             app=self,
@@ -164,6 +161,9 @@ class App:
         )
         self.scan_status_panel.set_stop_callback(self.scan_manager.stop_scan)
 
+=======
+        
+>>>>>>> Stashed changes
         self.stage_control_panel = StageControlPanel(
             parent=self.main_frame,
             root=self.root,
@@ -375,25 +375,7 @@ class App:
             return
         self.mapper.set_live_map_2x()
 
-    def _start_auto_map_2x(self):
-        """Run the legacy Auto Map command through the scan worker."""
-        if not self.hardware_controls_available():
-            return
-        try:
-            self.scan_manager.start_scan(
-                scan_type="2x Scan",
-                on_error=lambda error: messagebox.showerror(
-                    "Auto Map Error",
-                    str(error),
-                    parent=self.root,
-                ),
-            )
-        except RuntimeError as error:
-            messagebox.showerror(
-                "Auto Map Error",
-                str(error),
-                parent=self.root,
-            )
+
 
     def display_chip_dropdown(self, display=True):
 
@@ -686,8 +668,7 @@ class App:
         if not self._scan_controls_locked:
             return True
         return (
-            hasattr(self, "scan_manager")
-            and self.scan_manager.is_scan_worker_thread()
+            FALSE
         )
 
     def clear_focus(self, event):
@@ -707,14 +688,6 @@ class App:
             return
         shutdown_was_requested = self._shutdown_requested
         self._shutdown_requested = True
-        if (
-            hasattr(self, "scan_manager")
-            and self.scan_manager.is_scan_running()
-        ):
-            if not shutdown_was_requested:
-                self.scan_manager.stop_scan()
-            self.root.after(50, self.on_close)
-            return
 
         focus_controller = getattr(self, "focus_controller", None)
         focus_thread = (

@@ -69,11 +69,8 @@ class ThorController:
             self.device.SetSettings(self.device_settings, True, True)
 
             print("Zeroing self.device")
-            self.device.SetPositionAs(self.x_motor, 0)
-            self.device.SetPositionAs(self.y_motor, 0)
-            self.device.SetPositionAs(self.z_motor, 0)
-            self.device.SetPositionAs(self.angle_motor, 0)
-
+            self.set_origin()
+            
             print("Setting Jog parameters")
             self.x_jogParams = self.device.GetJogParameters(self.x_motor)
             self.x_jogParams.JogRate = self.xy_velocity
@@ -103,6 +100,22 @@ class ThorController:
         except Exception as e:
             print(e)
 
+    def set_origin(self):
+        try:
+            self.device.SetPositionAs(self.x_motor, 0)
+            self.device.SetPositionAs(self.y_motor, 0)
+            self.device.SetPositionAs(self.z_motor, 0)
+            self.device.SetPositionAs(self.angle_motor, 0)
+            
+        except Exception as e:
+            print(e)
+
+    def set_z_zero(self):
+        try: 
+            self.device.SetPositionAs(self.z_motor, 0)
+        except Exception as e:
+            print(e)
+    
     def go_to_Xpos(self, new_x):
         try:
             self.device.MoveTo(self.x_motor, new_x, 1000)
@@ -112,6 +125,15 @@ class ThorController:
 
     def go_to_Ypos(self, new_y):
         try:
+            self.device.MoveTo(self.y_motor, new_y, 1000)
+            self.y = new_y
+        except Exception as e:
+            print(e)
+            
+    def go_to_xypos(self, new_x, new_y):
+        try:
+            self.device.MoveTo(self.x_motor, new_x, 1000)
+            self.x = new_x
             self.device.MoveTo(self.y_motor, new_y, 1000)
             self.y = new_y
         except Exception as e:
@@ -146,7 +168,7 @@ class ThorController:
         self.z_jogParams.JogRate = self.z_velocity
         self.device.SetJogParameters(self.z_motor, self.z_jogParams)
 
-    def set_Angle_velocity(self, velocity):
+    def set_angle_velocity(self, velocity):
         self.angle_velocity = velocity
         self.device_settings.Drive.Channel(self.angle_motor).StepRate = velocity
         self.angle_jogParams.JogRate = self.angle_velocity
