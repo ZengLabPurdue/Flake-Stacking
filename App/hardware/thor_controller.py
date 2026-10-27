@@ -25,8 +25,8 @@ class ThorController:
         self.z_velocity = 500
         self.z_acceleration = 10000
 
-        self.xy_step_size = 1000
-        self.z_step_size = 500
+        self.xy_step_size = 100
+        self.z_step_size = 50
 
         try:
             DeviceManagerCLI.BuildDeviceList()
@@ -120,6 +120,12 @@ class ThorController:
         except Exception as e:
             print(e)
 
+    def set_xy_step_size(self, step_size):
+        self.xy_step_size = step_size
+
+    def set_z_step_size(self, step_size):
+        self.z_step_size = step_size
+
     def set_z_zero(self):
         try: 
             self.device.SetPositionAs(self.z_motor, 0)
@@ -149,7 +155,7 @@ class ThorController:
         except Exception as e:
             print(e)
 
-    def go_to_Zpos(self, new_z):
+    def go_to_zpos(self, new_z):
         try:
             self.device.MoveTo(self.z_motor, new_z, 1000)
             self.z = new_z
@@ -286,8 +292,17 @@ class ThorController:
 
     def step_right(self):
         self.get_position()
+        print("x: ", self.x)
         return self.go_to_xypos(self.x - self.xy_step_size, self.y)
 
+    def step_up(self):
+        self.get_position()
+        return self.go_to_zpos(self.z - self.z_step_size)
+
+    def step_down(self):
+        self.get_position()
+        return self.go_to_zpos(self.z + self.z_step_size)
+    
 
     def disconnect(self):
         try:

@@ -394,9 +394,11 @@ class ThorControlPanel:
     # ---------------- XY hold callbacks ----------------
 
     def on_press_forward(self, event):
+        print("Pressed Forward")
         self.on_press_motion(self.thor.start_forward_y_motor)
 
     def on_release_forward(self, event):
+        print("Released Forward")
         self.on_release_motion(self.thor.stop_y_motor, self.thor.step_forward)
 
     def on_press_backward(self, event):
@@ -406,13 +408,13 @@ class ThorControlPanel:
         self.on_release_motion(self.thor.stop_y_motor, self.thor.step_backward)
 
     def on_press_left(self, event):
-        self.on_press_motion(self.thor.start_left)
+        self.on_press_motion(self.thor.start_forward_x_motor)
 
     def on_release_left(self, event):
         self.on_release_motion(self.thor.stop_x_motor, self.thor.step_left)
 
     def on_press_right(self, event):
-        self.on_press_motion(self.thor.start_right)
+        self.on_press_motion(self.thor.start_backward_x_motor)
 
     def on_release_right(self, event):
         self.on_release_motion(self.thor.stop_x_motor, self.thor.step_right)
@@ -433,14 +435,7 @@ class ThorControlPanel:
     def on_release_down(self, event):
         self.on_release_motion(self.thor.stop_z_motor, self.thor.step_down)
 
-    def step_up(self):
-        self.get_position()
-        return self.go_to_Zpos(self.z - self.z_step_size)
-
-    def step_down(self):
-        self.get_position()
-        return self.go_to_Zpos(self.z + self.z_step_size)
-
+    
     # ---------------- Speed callbacks ----------------
 
     def on_speed_change_xy(self):
