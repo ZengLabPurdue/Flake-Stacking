@@ -23,6 +23,7 @@ from ui.panels.focus_panel import FocusPanel
 from ui.panels.capture_panel import CapturePanel
 from ui.panels.camera_settings_panel import CameraSettingsPanel
 from ui.panels.thor_controller_panel import ThorControlPanel
+from ui.panels.sequence_setup_panel import SequenceSetupPanel
 from ui.display_acceleration import DisplayResizer
 from imaging.frame_processing import FrameProcessor
 from imaging.focus import FocusController
@@ -139,6 +140,11 @@ class App:
             stage=self.stage,
         )
 
+        self.sequence_setup_panel = SequenceSetupPanel(
+            parent=self.main_frame,
+            root=self.root,
+            app=self,
+        )
 
         self.capture_panel = CapturePanel(
             parent=self.main_frame,
@@ -205,6 +211,12 @@ class App:
         self.panels.append({
             "name": "Thor Controller Panel",
             "frame": self.thor_panel.frame,
+            "var": BooleanVar(value=False)
+        })
+
+        self.panels.append({
+            "name": "Sequence Setup Panel",
+            "frame": self.sequence_setup_panel.frame,
             "var": BooleanVar(value=False)
         })
 
@@ -609,6 +621,8 @@ class App:
             return
         shutdown_was_requested = self._shutdown_requested
         self._shutdown_requested = True
+        if hasattr(self, "sequence_setup_panel"):
+            self.sequence_setup_panel.cancel_sequence(show_errors=False)
 
         focus_controller = getattr(self, "focus_controller", None)
         focus_thread = (

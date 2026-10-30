@@ -161,7 +161,7 @@ class ThorController:
         except Exception as e:
             print(e)
 
-    def go_to_Angle(self, new_angle):
+    def go_to_angle(self, new_angle):
         try:
             self.device.MoveTo(self.angle_motor, new_angle, 1000)
             self.angle = new_angle
