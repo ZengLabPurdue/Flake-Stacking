@@ -132,37 +132,32 @@ class ThorController:
         except Exception as e:
             print(e)
     
-    def go_to_xpos(self, new_x):
+    def go_to_xpos(self, new_x, timeout=1000):
         try:
-            self.device.MoveTo(self.x_motor, new_x, 1000)
-            self.x = new_x
+            self.device.MoveTo(self.x_motor, new_x, timeout)
+            self.x = self.get_x_pos()
         except Exception as e:
             print(e)
 
-    def go_to_ypos(self, new_y):
+    def go_to_ypos(self, new_y, timeout=1000):
         try:
-            self.device.MoveTo(self.y_motor, new_y, 1000)
-            self.y = new_y
+            self.device.MoveTo(self.y_motor, new_y, timeout)
+            self.y = self.get_y_pos()
         except Exception as e:
             print(e)
             
     def go_to_xypos(self, new_x, new_y):
-        try:
-            self.device.MoveTo(self.x_motor, new_x, 1000)
-            self.x = new_x
-            self.device.MoveTo(self.y_motor, new_y, 1000)
-            self.y = new_y
-            
-        
-        except Exception as e:
-            print(e)
+        if(not new_x == self.x):
+            self.go_to_xpos(new_x, timeout=12000)
+        if(not new_y == self.y):
+            self.go_to_ypos(new_y, timeout=12000)
+        self.x = self.get_x_pos()
+        self.y = self.get_y_pos()
 
-        
-
-    def go_to_zpos(self, new_z):
+    def go_to_zpos(self, new_z, timeout=1000):
         try:
-            self.device.MoveTo(self.z_motor, new_z, 1000)
-            self.z = new_z
+            self.device.MoveTo(self.z_motor, new_z, timeout)
+            self.z = self.get_z_pos()
         except Exception as e:
             print(e)
 

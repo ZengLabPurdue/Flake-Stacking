@@ -321,8 +321,6 @@ class ThorControlPanel:
             if y is None:
                 y = int(self.y_coord_var.get())
 
-            print(x)
-            print(y)
             self.thor.go_to_xypos(x,y)
             self.update_position_display()
 
@@ -336,9 +334,9 @@ class ThorControlPanel:
 
         try:
             if z is None:
-                z = float(self.z_coord_var.get())
+                z = int(self.z_coord_var.get())
             print(z)
-            self.thor.go_to_Zpos(z)
+            self.thor.go_to_zpos(z, timeout=12000)
             self.update_position_display()
 
         finally:
@@ -438,7 +436,7 @@ class ThorControlPanel:
     
     # ---------------- Speed callbacks ----------------
 
-    def on_speed_change_xy(self):
+    def on_speed_change_xy(self, *args):
         if not self.app.hardware_controls_available():
             return
         try:
@@ -446,7 +444,7 @@ class ThorControlPanel:
         except ValueError:
             pass
 
-    def on_speed_change_z(self):
+    def on_speed_change_z(self, *args):
         if not self.app.hardware_controls_available():
             return
         try:
@@ -454,7 +452,7 @@ class ThorControlPanel:
         except ValueError:
             pass
         
-    def on_speed_change_angle(self):
+    def on_speed_change_angle(self, *args):
         if not self.app.hardware_controls_available():
             return
         try:
