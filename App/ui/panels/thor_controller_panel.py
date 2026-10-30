@@ -61,7 +61,7 @@ class ThorControlPanel:
             anchor="e"
         ).place(x=label_x, y=45)
 
-        self.xy_step_var = tk.StringVar(value=str(self.thor.xy_step_size))
+        self.xy_step_var = tk.StringVar(value=str(self.thor.xy_step_var))
         self.xy_step_entry = ttk.Entry(
             panel,
             textvariable=self.xy_step_var,
@@ -195,7 +195,7 @@ class ThorControlPanel:
             anchor="e"
         ).place(x=label_x, y=345)
 
-        self.z_step_var = tk.StringVar(value=str(self.thor.z_step_size))
+        self.z_step_var = tk.StringVar(value=str(self.thor.z_step_var))
         self.z_step_entry = ttk.Entry(panel, textvariable=self.z_step_var, width=8)
         self.z_step_entry.place(x=entry_x, y=345)
 
@@ -338,7 +338,7 @@ class ThorControlPanel:
             if z is None:
                 z = float(self.z_coord_var.get())
             print(z)
-            # self.thor.go_to_Zpos(z)
+            self.thor.go_to_Zpos(z)
             self.update_position_display()
 
         finally:
@@ -387,7 +387,7 @@ class ThorControlPanel:
 
     def update_step_sizes(self):
         try:
-            self.thor.set_xy_step_size(int(self.xy_step_var.get()))
+            self.thor.set_xy_step_var(int(self.xy_step_var.get()))
         except ValueError:
             pass
 

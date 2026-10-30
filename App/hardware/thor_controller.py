@@ -25,8 +25,8 @@ class ThorController:
         self.z_velocity = 500
         self.z_acceleration = 10000
 
-        self.xy_step_size = 100
-        self.z_step_size = 50
+        self.xy_step_var = 100
+        self.z_step_var = 50
 
         try:
             DeviceManagerCLI.BuildDeviceList()
@@ -120,11 +120,11 @@ class ThorController:
         except Exception as e:
             print(e)
 
-    def set_xy_step_size(self, step_size):
-        self.xy_step_size = step_size
+    def set_xy_step_var(self, step_var):
+        self.xy_step_var = step_var
 
-    def set_z_step_size(self, step_size):
-        self.z_step_size = step_size
+    def set_z_step_var(self, step_var):
+        self.z_step_var = step_var
 
     def set_z_zero(self):
         try: 
@@ -132,14 +132,14 @@ class ThorController:
         except Exception as e:
             print(e)
     
-    def go_to_Xpos(self, new_x):
+    def go_to_xpos(self, new_x):
         try:
             self.device.MoveTo(self.x_motor, new_x, 1000)
             self.x = new_x
         except Exception as e:
             print(e)
 
-    def go_to_Ypos(self, new_y):
+    def go_to_ypos(self, new_y):
         try:
             self.device.MoveTo(self.y_motor, new_y, 1000)
             self.y = new_y
@@ -152,8 +152,12 @@ class ThorController:
             self.x = new_x
             self.device.MoveTo(self.y_motor, new_y, 1000)
             self.y = new_y
+            
+        
         except Exception as e:
             print(e)
+
+        
 
     def go_to_zpos(self, new_z):
         try:
@@ -280,28 +284,29 @@ class ThorController:
 
     def step_forward(self):
         self.get_position()
-        return self.go_to_xypos(self.x, self.y - self.xy_step_size)
+        self.go_to_ypos(self.y - self.xy_step_var)
 
     def step_backward(self):
         self.get_position()
-        return self.go_to_xypos(self.x, self.y + self.xy_step_size)
+        self.go_to_ypos(self.y + self.xy_step_var)
 
     def step_left(self):
         self.get_position()
-        return self.go_to_xypos(self.x + self.xy_step_size, self.y)
+
+        self.go_to_xpos(self.x + self.xy_step_var)
 
     def step_right(self):
         self.get_position()
-        print("x: ", self.x)
-        return self.go_to_xypos(self.x - self.xy_step_size, self.y)
+
+        self.go_to_xpos(self.x - self.xy_step_var)
 
     def step_up(self):
         self.get_position()
-        return self.go_to_zpos(self.z - self.z_step_size)
+        self.go_to_zpos(self.z - self.z_step_var)
 
     def step_down(self):
         self.get_position()
-        return self.go_to_zpos(self.z + self.z_step_size)
+        self.go_to_zpos(self.z + self.z_step_var)
     
 
     def disconnect(self):
