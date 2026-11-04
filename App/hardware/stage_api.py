@@ -483,11 +483,11 @@ class stage:
     # ---------------- Continuous Movement ----------------
 
     def start_forward(self):
-        self.cmd(f"controller.stage.move-at-velocity 0 -{self.velocity}")
+        self.cmd(f"controller.stage.move-at-velocity 0 {self.velocity}")
         self._note_motion_command()
 
     def start_backward(self):
-        self.cmd(f"controller.stage.move-at-velocity 0 {self.velocity}")
+        self.cmd(f"controller.stage.move-at-velocity 0 {abs(self.velocity)}")
         self._note_motion_command()
 
     def start_left(self):
@@ -495,7 +495,7 @@ class stage:
         self._note_motion_command()
 
     def start_right(self):
-        self.cmd(f"controller.stage.move-at-velocity -{self.velocity} 0")
+        self.cmd(f"controller.stage.move-at-velocity {abs(self.velocity)} 0")
         self._note_motion_command()
 
     def stop_x(self):
@@ -505,11 +505,11 @@ class stage:
         self.cmd("controller.stage.move-at-velocity 0 0")
 
     def start_up(self):
-        self.cmd(f"controller.z.move-at-velocity -{self.z_velocity}")
+        self.cmd(f"controller.z.move-at-velocity {self.z_velocity}")
         self._note_motion_command()
 
     def start_down(self):
-        self.cmd(f"controller.z.move-at-velocity {self.z_velocity}")
+        self.cmd(f"controller.z.move-at-velocity {abs(self.z_velocity)}")
         self._note_motion_command()
 
     def stop_z(self):
