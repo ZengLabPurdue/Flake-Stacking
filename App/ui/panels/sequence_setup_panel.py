@@ -120,6 +120,7 @@ class SequenceSetupPanel:
 
     def _build_panel(self):
         panel = tk.Frame(self.parent, bg="#f0f0f0", width=304, height=590)
+        panel.place(relx=1.0, rely=0.0, anchor="nw")
         background = tk.Frame(panel, bg="white", width=300, height=588)
         background.place(x=2, y=0)
 

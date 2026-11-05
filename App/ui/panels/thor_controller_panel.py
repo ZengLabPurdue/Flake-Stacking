@@ -41,7 +41,7 @@ class ThorControlPanel:
 
         title_label = tk.Label(
             panel,
-            text="Manual Control",
+            text="Kim Controller",
             bg="white",
             fg="black",
             font=("TkDefaultFont", 13)

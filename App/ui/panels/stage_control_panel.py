@@ -39,7 +39,7 @@ class StageControlPanel:
 
         title_label = tk.Label(
             panel,
-            text="Manual Control",
+            text="Stage Control",
             bg="white",
             fg="black",
             font=("TkDefaultFont", 13)

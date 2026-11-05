@@ -182,8 +182,6 @@ class App:
             "var": BooleanVar(value=False)
         })
 
-        
-
         self.panels.append({
             "name": "Stage Control Panel",
             "frame": self.stage_control_panel.frame,
