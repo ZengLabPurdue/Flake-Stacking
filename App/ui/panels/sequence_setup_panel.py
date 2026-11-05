@@ -119,8 +119,8 @@ class SequenceSetupPanel:
         self.frame = self._build_panel()
 
     def _build_panel(self):
-        panel = tk.Frame(self.parent, bg="#f0f0f0", width=404, height=590)
-        background = tk.Frame(panel, bg="white", width=400, height=588)
+        panel = tk.Frame(self.parent, bg="#f0f0f0", width=304, height=590)
+        background = tk.Frame(panel, bg="white", width=300, height=588)
         background.place(x=2, y=0)
 
         tk.Label(
@@ -175,9 +175,9 @@ class SequenceSetupPanel:
         self.sequence_tree.heading("command", text="Command")
         self.sequence_tree.heading("parameters", text="Parameters")
         self.sequence_tree.column("number", width=32, stretch=False, anchor="center")
-        self.sequence_tree.column("command", width=190, stretch=False)
-        self.sequence_tree.column("parameters", width=150)
-        self.sequence_tree.place(x=10, y=269, width=380, height=172)
+        self.sequence_tree.column("command", width=140, stretch=False)
+        self.sequence_tree.column("parameters", width=130)
+        self.sequence_tree.place(x=10, y=269, width=280, height=172)
         self.sequence_tree.bind("<ButtonPress-1>", self._start_sequence_drag)
         self.sequence_tree.bind("<<TreeviewSelect>>", self._on_sequence_selection)
 
@@ -199,28 +199,28 @@ class SequenceSetupPanel:
         for index, (label, entry) in enumerate(
             zip(self.argument_labels, self.argument_entries)
         ):
-            x_position = 10 + index * 190
+            x_position = 10 + index * 80
             label.place(x=x_position, y=474)
-            entry.place(x=x_position, y=496, width=170)
+            entry.place(x=x_position, y=496, width=40)
 
         self.apply_button = ttk.Button(
             background,
             text="Apply Parameters",
             command=self._apply_parameters,
         )
-        self.apply_button.place(x=10, y=528, width=130)
+        self.apply_button.place(x=10, y=528, width=100)
         self.delete_button = ttk.Button(
             background,
             text="Remove Selected",
             command=self._remove_selected,
         )
-        self.delete_button.place(x=148, y=528, width=120)
+        self.delete_button.place(x=118, y=528, width=100)
         self.clear_button = ttk.Button(
             background,
             text="Clear",
             command=self._clear_sequence,
         )
-        self.clear_button.place(x=276, y=528, width=70)
+        self.clear_button.place(x=228, y=528, width=70)
 
         self.run_button = ttk.Button(
             background,
