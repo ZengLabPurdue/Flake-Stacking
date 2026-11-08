@@ -398,7 +398,7 @@ class stage:
     ):
         if self.is_busy():
             return False
-
+        self.get_position()
         target_x = int(x)
         target_y = int(y)
         return_code, response = self.cmd(
@@ -410,7 +410,7 @@ class stage:
                 f"to ({target_x}, {target_y}): {response!r}"
             )
         self._note_motion_command()
-
+        self.get_position()
         if wait:
             self.wait_for_xy_target(
                 target_x,
@@ -429,7 +429,7 @@ class stage:
     ):
         if self.is_busy():
             return False
-
+        self.get_position()
         z_prior_units = int(round(float(z) * 10))
         return_code, response = self.cmd(
             f"controller.z.goto-position {z_prior_units}"
@@ -439,7 +439,7 @@ class stage:
                 f"The controller rejected the Z move to {z}: {response!r}"
             )
         self._note_motion_command()
-
+        self.get_position()
         if wait:
             self.wait_for_z_target(
                 z,
@@ -458,51 +458,69 @@ class stage:
 
     def step_forward(self):
         self.get_position()
-        return self.move_to_xy(self.x, self.y - self.xy_step_size)
+        out = self.move_to_xy(self.x, self.y - self.xy_step_size)
+        self.get_position()
+        return out
 
     def step_backward(self):
         self.get_position()
-        return self.move_to_xy(self.x, self.y + self.xy_step_size)
+        out = self.move_to_xy(self.x, self.y + self.xy_step_size)
+        self.get_position()
+        return out
 
     def step_left(self):
         self.get_position()
-        return self.move_to_xy(self.x + self.xy_step_size, self.y)
+        out = self.move_to_xy(self.x + self.xy_step_size, self.y)
+        self.get_position()
+        return out
 
     def step_right(self):
         self.get_position()
-        return self.move_to_xy(self.x - self.xy_step_size, self.y)
+        out = self.move_to_xy(self.x - self.xy_step_size, self.y)
+        self.get_position()
+        return out
 
     def step_up(self):
         self.get_position()
-        return self.move_to_z(self.z - self.z_step_size)
+        out = self.move_to_z(self.z - self.z_step_size)
+        self.get_position()
+        return out
 
     def step_down(self):
         self.get_position()
-        return self.move_to_z(self.z + self.z_step_size)
+        out = self.move_to_z(self.z + self.z_step_size)
+        self.get_position()
+        return out
 
     # ---------------- Continuous Movement ----------------
 
     def start_forward(self):
+        self.get_position()
         self.cmd(f"controller.stage.move-at-velocity 0 {-abs(self.velocity)}")
         self._note_motion_command()
 
     def start_backward(self):
+        self.get_position()
         self.cmd(f"controller.stage.move-at-velocity 0 {abs(self.velocity)}")
         self._note_motion_command()
 
     def start_left(self):
+        self.get_position()
         self.cmd(f"controller.stage.move-at-velocity {abs(self.velocity)} 0")
         self._note_motion_command()
 
     def start_right(self):
+        self.get_position()
         self.cmd(f"controller.stage.move-at-velocity {-abs(self.velocity)} 0")
         self._note_motion_command()
 
     def stop_x(self):
         self.cmd("controller.stage.move-at-velocity 0 0")
+        self.get_position()
 
     def stop_y(self):
         self.cmd("controller.stage.move-at-velocity 0 0")
+        self.get_position()
 
     def start_up(self):
         self.cmd(f"controller.z.move-at-velocity {abs(self.z_velocity)}")
