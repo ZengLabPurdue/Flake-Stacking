@@ -206,19 +206,11 @@ class App:
             "var": BooleanVar(value=False)
         })
 
-        self.panels.append({
-            "name": "Thor Controller Panel",
-            "frame": self.thor_panel.frame,
-            "var": BooleanVar(value=False)
-        })
-
-        self.panels.append({
+        self.sequencer = {
             "name": "Sequence Setup Panel",
             "frame": self.sequence_setup_panel.frame,
             "var": BooleanVar(value=False)
-        })
-
-
+        }
 
         self.update_panels()
 
@@ -290,17 +282,27 @@ class App:
             variable=self.camera_vignette_filter_var,
             command=self.toggle_camera_vignette_filter,
         )
+        
+        sequencer_menu = Menu(menu_bar, tearoff=0)
+        sequencer_menu.add_checkbutton(
+                        label=self.sequence_setup_panel["name"],
+                        variable=self.sequence_setup_panel["name"],
+                        command=self.update_panels
+                    )
+        
 
         view_menu.add_cascade(label="Camera Filters", menu=camera_menu)
 
         menu_bar.add_cascade(label="View", menu=view_menu)
+
+        menu_bar.add_cascade(label="Sequencer", menu=sequencer_menu)
 
         panel_menu = Menu(menu_bar, tearoff=0)
 
         for panel in self.panels:
             panel_menu.add_checkbutton(
                 label=panel["name"],
-                variable=panel["var"],
+                var=panel["var"],
                 command=self.update_panels
             )
 
@@ -533,6 +535,22 @@ class App:
             self.call_on_ui_thread(self.update_panels)
             return
         y_position = -2
+        
+        
+        if self.sequence_setup_panel["var"].get():
+            sequence_frame = self.sequence_setup_panel["frame"]
+            sequence_frame.place_forget()
+            sequence_frame.place(
+                        relx=1.0,
+                        rely=0.0,
+                        anchor="nw",
+                        y=y_position
+                    )
+    
+            sequence_frame.update_idletasks()
+
+            y_position += sequence_frame.winfo_height()
+        
 
         for panel in self.panels:
             frame = panel["frame"]
@@ -559,11 +577,17 @@ class App:
         self.update_panels()
         self.view_scans_panel.hide()
         self.scan_profile_panel.hide()
+        self.sequence_setup_panel.hide()
 
     def open_panel(self, name):
         if threading.get_ident() != self._ui_thread_id:
             self.call_on_ui_thread(self.open_panel, name)
             return
+        if self.sequence_setup_panel["name"]==name:
+            self.sequence_setup_panel["var"].set(True)
+            self.update_panels()
+            return
+        
         for panel in self.panels:
             if panel["name"] == name:
                 panel["var"].set(True)
